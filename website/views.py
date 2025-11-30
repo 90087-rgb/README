@@ -1,11 +1,9 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, current_app
 from flask_login import login_required, current_user
 from .models import Post, Comment, Notification, Like, User
 from . import db
 from datetime import datetime
 from .structures.heap import MaxHeap
-from .structures.comment_list import CommentList
-from .utils.search_algorithms import simple_search
 import os
 from werkzeug.utils import secure_filename
 
@@ -71,7 +69,9 @@ def create_post():
             file = request.files["image"]
             if file and file.filename and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                file.save(os.path.join("static/uploads", filename))
+                upload_folder = current_app.config.get("UPLOAD_FOLDER", "static/uploads")
+                os.makedirs(upload_folder, exist_ok=True)
+                file.save(os.path.join(upload_folder, filename))
                 image = filename
         
         if text or image:
@@ -146,10 +146,6 @@ def add_comment(post_id):
         comment = Comment(text=text, user_id=current_user.id, post_id=post_id)
         db.session.add(comment)
         db.session.commit()
-        
-        if not hasattr(post, "comments_list") or post.comments_list is None:
-            post.comments_list = CommentList()
-        post.comments_list.add(comment)
         
         if post.user_id != current_user.id:
             add_notice(post.user_id, f"{current_user.username} commented on your post", f"/posts")
