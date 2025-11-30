@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}People{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h2>People</h2>
+        
+        {% if users %}
+        <div class="row">
+            {% for u in users %}
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title mb-1">
+                                    <a href="{{ url_for('social.profile', user_id=u.id) }}">{{ u.username }}</a>
+                                </h5>
+                                <p class="card-text text-muted small">{{ u.bio or 'No bio' }}</p>
+                            </div>
+                            <div>
+                                {% if u.id in following_ids %}
+                                <form action="{{ url_for('social.unfollow', user_id=u.id) }}" method="post">
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm">Unfollow</button>
+                                </form>
+                                {% else %}
+                                <form action="{{ url_for('social.follow', user_id=u.id) }}" method="post">
+                                    <button type="submit" class="btn btn-primary btn-sm">Follow</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted">No other users found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
