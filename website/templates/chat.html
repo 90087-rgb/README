@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Chat with {{ other_user.username }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Chat with {{ other_user.username }}</h5>
+                <a href="{{ url_for('social.chats_list') }}" class="btn btn-sm btn-outline-secondary">Back</a>
+            </div>
+            <div class="card-body" style="height: 400px; overflow-y: auto;" id="chat-messages">
+                {% for msg in messages %}
+                <div class="mb-2 {{ 'text-end' if msg.sender_id == user.id else '' }}">
+                    <div class="d-inline-block p-2 rounded {{ 'bg-primary text-white' if msg.sender_id == user.id else 'bg-light' }}" style="max-width: 70%;">
+                        {{ msg.text }}
+                        <br>
+                        <small class="{{ 'text-light' if msg.sender_id == user.id else 'text-muted' }}" style="font-size: 0.7em;">
+                            {{ msg.created_at.strftime('%H:%M') }}
+                        </small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="card-footer">
+                <form action="{{ url_for('social.send_message', user_id=other_user.id) }}" method="post">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="text" placeholder="Type a message..." autofocus>
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='chat.js') }}"></script>
+<script>
+document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+</script>
+{% endblock %}

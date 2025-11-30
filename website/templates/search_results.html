@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h2>Search Results for "{{ query }}"</h2>
+        
+        {% if users %}
+        <h4>Users</h4>
+        <div class="list-group mb-4">
+            {% for u in users %}
+            <a href="{{ url_for('social.profile', user_id=u.id) }}" class="list-group-item list-group-item-action">
+                <h6 class="mb-1">{{ u.username }}</h6>
+                <small class="text-muted">{{ u.bio or 'No bio' }}</small>
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        {% if posts %}
+        <h4>Posts</h4>
+        {% for post in posts %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">{{ post.author.username }}</h6>
+                <p class="card-text">{{ post.text }}</p>
+                <small class="text-muted">{{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+        
+        {% if not users and not posts %}
+        <p class="text-muted">No results found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

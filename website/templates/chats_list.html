@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Chats{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h2>Chats</h2>
+        
+        {% if chat_users %}
+        <div class="list-group">
+            {% for u in chat_users %}
+            <a href="{{ url_for('social.chat', user_id=u.id) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-1">{{ u.username }}</h6>
+                    <small class="text-muted">Click to view conversation</small>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted">No conversations yet. Start one by visiting someone's profile!</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
